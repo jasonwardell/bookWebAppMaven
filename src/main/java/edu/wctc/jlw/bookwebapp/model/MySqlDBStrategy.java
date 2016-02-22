@@ -151,16 +151,59 @@ public class MySqlDBStrategy implements DBStrategy {
         return psmt.executeUpdate();
     }
 
+    private PreparedStatement buildInsertStatement(Connection conn_loc, String tableName, List columnName)
+            throws SQLException {
+        StringBuffer sql = new StringBuffer("INSERT INTO ");
+        (sql.append(tableName)).append(" (");
+        final Iterator i = columnName.iterator();
+        while (i.hasNext()) {
+            (sql.append((String) i.next())).append(", ");
+        }
+        sql = new StringBuffer((sql.toString()).substring(0, (sql.toString()).lastIndexOf(", ")) + ") VALUES (");
+        for (int j = 0; j < columnName.size(); j++) {
+            sql.append("?, ");
+        }
+        final String finalSQL = (sql.toString()).substring(0, (sql.toString()).lastIndexOf(", ")) + ")";
+        //System.out.println(finalSQL);
+        return conn_loc.prepareStatement(finalSQL);
+    }
+
     @Override
-    public int insertNewRecord(String tableName, List<String> columnNames, 
+    public boolean insertNewRecord(String tableName, List<String> columnNames,
             List<Object> columnValues) throws SQLException {
-       
-        String sql = "INSERT INTO " + tableName + "(" + columnNames + ")"
-                + " VALUES ( " + columnValues + " )";
-        
-        Statement stmt = conn.createStatement();
-        
-        return stmt.executeUpdate(sql);
+
+        PreparedStatement pstmt = null;
+        int recsUpdated = 0;
+        try {
+            pstmt = buildInsertStatement(conn, tableName, columnNames);
+
+            final Iterator i = columnValues.iterator();
+            int index = 1;
+            while (i.hasNext()) {
+                final Object obj = i.next();
+                pstmt.setObject(index++, obj);
+            }
+
+            recsUpdated = pstmt.executeUpdate();
+
+        } catch (SQLException sqle) {
+            throw sqle;
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            try {
+                pstmt.close();
+                conn.close();
+            } catch (SQLException e) {
+                throw e;
+            } // end try
+        } // end finally
+
+        if (recsUpdated == 1) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 //    @Override
@@ -184,13 +227,15 @@ public class MySqlDBStrategy implements DBStrategy {
                 "jdbc:mysql://localhost:3306/book", "root", "admin");
 
 //        db.deleteRecordById("author", "author_id", 2);
+        List<String> colNames = Arrays.asList("author_name", "date_added");
+        List<Object> colValues = Arrays.asList("BrettFavre", "1988-06-14");
+        int result = db.updateRecordById("author", colNames, colValues, "author_id", 5);
+//        db.insertNewRecord("author", colNames, colValues);
+
+        db.openConnection("com.mysql.jdbc.Driver",
+                "jdbc:mysql://localhost:3306/book", "root", "admin");
         List<Map<String, Object>> rawData = db.findAllRecords("author", 0);
 
-        List<String> colNames = Arrays.asList("author_name", "date_added");
-        List<Object> colValues = Arrays.asList("BobBuilder", "1988-06-14");
-//        int result = db.updateRecordById("author", colNames, colValues, "author_id", 3);
-        db.insertNewRecord("author", colNames, colValues);
-        
         db.closeConnection();
 
         System.out.println(rawData);
