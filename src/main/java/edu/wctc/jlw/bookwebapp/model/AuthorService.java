@@ -1,14 +1,27 @@
 package edu.wctc.jlw.bookwebapp.model;
 
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.List;
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
 
 /**
  *
  * @author jwardell
  */
-public class AuthorService {
-    private AuthorDaoStrategy dao = new AuthorDao();
+@SessionScoped
+public class AuthorService implements Serializable {
+    @Inject
+    private AuthorDaoStrategy dao;
+
+    public AuthorDaoStrategy getDao() {
+        return dao;
+    }
+
+    public void setDao(AuthorDaoStrategy dao) {
+        this.dao = dao;
+    }
     
     public List<Author> getAuthorList() 
             throws ClassNotFoundException, SQLException {

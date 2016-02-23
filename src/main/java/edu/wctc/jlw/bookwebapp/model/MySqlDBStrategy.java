@@ -1,5 +1,6 @@
 package edu.wctc.jlw.bookwebapp.model;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -14,15 +15,20 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import javax.enterprise.context.SessionScoped;
 
 /**
  *
  * @author jwardell
  */
-public class MySqlDBStrategy implements DBStrategy {
+@SessionScoped
+public class MySqlDBStrategy implements DBStrategy, Serializable {
 
     private Connection conn;
 
+    public MySqlDBStrategy() {
+    }
+    
     @Override
     public void openConnection(String driverClass, String url,
             String userName, String password) throws ClassNotFoundException, SQLException {
@@ -228,8 +234,8 @@ public class MySqlDBStrategy implements DBStrategy {
 
 //        db.deleteRecordById("author", "author_id", 2);
         List<String> colNames = Arrays.asList("author_name", "date_added");
-        List<Object> colValues = Arrays.asList("BrettFavre", "1988-06-14");
-        int result = db.updateRecordById("author", colNames, colValues, "author_id", 5);
+        List<Object> colValues = Arrays.asList("Mike Jones", "1998-01-10");
+        int result = db.updateRecordById("author", colNames, colValues, "author_id", 3);
 //        db.insertNewRecord("author", colNames, colValues);
 
         db.openConnection("com.mysql.jdbc.Driver",

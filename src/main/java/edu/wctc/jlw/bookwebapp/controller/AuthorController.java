@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import edu.wctc.jlw.bookwebapp.model.MockAuthorDao;
+import javax.inject.Inject;
 
 /**
  *
@@ -18,6 +19,9 @@ import edu.wctc.jlw.bookwebapp.model.MockAuthorDao;
 @WebServlet(name = "AuthorController", urlPatterns = {"/AuthorController"})
 public class AuthorController extends HttpServlet {
 
+    @Inject
+    private AuthorService authorService;
+    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -32,7 +36,6 @@ public class AuthorController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         
         try {
-            AuthorService authorService = new AuthorService();
             List responseMsg = authorService.getAuthorList();
 
             request.setAttribute("authorList", responseMsg);

@@ -13,4 +13,7 @@ public interface AuthorDaoStrategy {
     
     public int deleteAuthorById(Object id) throws ClassNotFoundException, SQLException;
     
+    public DBStrategy getDb();
+    
+    public void setDb(DBStrategy db);
 }
