@@ -23,8 +23,9 @@
             </h1> 
         </header>
         <ul>
+            <li> <a href="index.html">Home</a></li>
             <li><a href="AuthorController?action=AuthorController">View all Authors</a></li>
-             <li><a href="AuthorController?action=AuthorController">View all Books</a></li>
+            <li><a href="AuthorController?action=AuthorController">View all Books</a></li>
         </ul>
         <p>
         <table id="authors" BORDER="3" CELLSPACING="1" CELLPADDING="1" >
@@ -36,7 +37,8 @@
             <c:forEach var="author" items="${authorList}">
                 <tr>
                     <td>
-                        <c:out value="${author.authorId}" />
+                        <input type="checkbox" name="option" value="${author.authorId}">
+                        <%--<c:out value="${author.authorId}" />--%>
                     </td>
                     <td>
                         <c:out value="${author.authorName}" />
