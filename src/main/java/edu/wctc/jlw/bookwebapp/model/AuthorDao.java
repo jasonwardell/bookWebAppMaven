@@ -6,18 +6,23 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import javax.enterprise.context.SessionScoped;
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 /**
  *
  * @author jwardell
  */
-@SessionScoped
+@Dependent
 public class AuthorDao implements AuthorDaoStrategy, Serializable {
     @Inject
     private DBStrategy db;
-
+    
+    private String driver;
+    private String url;
+    private String user;
+    private String pwd;
+    
     public DBStrategy getDb() {
         return db;
     }
@@ -28,15 +33,50 @@ public class AuthorDao implements AuthorDaoStrategy, Serializable {
     public void setDb(DBStrategy db) {
         this.db = db;
     }
+
+    public String getDriver() {
+        return driver;
+    }
+
+    public void setDriver(String driver) {
+        this.driver = driver;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public String getPwd() {
+        return pwd;
+    }
+
+    public void setPwd(String pwd) {
+        this.pwd = pwd;
+    }
     
-    private final String DRIVER = "com.mysql.jdbc.Driver";
-    private final String URL = "jdbc:mysql://localhost:3306/book";
-    private final String USER = "root";
-    private final String PWD = "admin";
+    @Override
+    public void initDao(String driver, String url, String user, String pwd) {
+        setDriver(driver);
+        setUrl(url);
+        setUser(user);
+        setPwd(pwd);
+    }
     
     @Override
     public int deleteAuthorById(Object id) throws ClassNotFoundException, SQLException {
-        db.openConnection(DRIVER, URL, USER, PWD);
+        db.openConnection(driver, url, user, pwd);
         int result = db.deleteRecordById("author", "author_id", id);
         db.closeConnection();
         return result;
@@ -44,7 +84,7 @@ public class AuthorDao implements AuthorDaoStrategy, Serializable {
     
     @Override
     public List<Author> getAuthorList() throws ClassNotFoundException, SQLException {
-        db.openConnection(DRIVER, URL, USER, PWD);
+        db.openConnection(driver, url, user, pwd);
         
         List<Map<String,Object>> rawData =
                 db.findAllRecords("author", 0);

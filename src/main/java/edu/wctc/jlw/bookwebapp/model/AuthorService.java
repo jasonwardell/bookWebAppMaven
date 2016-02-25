@@ -15,6 +15,9 @@ public class AuthorService implements Serializable {
     @Inject
     private AuthorDaoStrategy dao;
 
+    public AuthorService() {     
+    }
+    
     public AuthorDaoStrategy getDao() {
         return dao;
     }

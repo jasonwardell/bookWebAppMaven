@@ -19,9 +19,14 @@ import javax.inject.Inject;
 @WebServlet(name = "AuthorController", urlPatterns = {"/AuthorController"})
 public class AuthorController extends HttpServlet {
 
+    private String driverClass;
+    private String url;
+    private String username;
+    private String password;
+
     @Inject
     private AuthorService authorService;
-    
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -34,6 +39,8 @@ public class AuthorController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+
+        configDbConnection();
         
         try {
             List responseMsg = authorService.getAuthorList();
@@ -46,6 +53,10 @@ public class AuthorController extends HttpServlet {
         RequestDispatcher view
                 = request.getRequestDispatcher("/authorInfo.jsp");
         view.forward(request, response);
+    }
+    
+    private void configDbConnection() {
+        authorService.getDao().initDao(driverClass, url, username, password);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -87,4 +98,11 @@ public class AuthorController extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    @Override
+    public void init() throws ServletException {
+        driverClass = getServletContext().getInitParameter("db.driver.class");
+        url = getServletContext().getInitParameter("db.url");
+        username = getServletContext().getInitParameter("db.username");
+        password = getServletContext().getInitParameter("db.password");
+    }
 }

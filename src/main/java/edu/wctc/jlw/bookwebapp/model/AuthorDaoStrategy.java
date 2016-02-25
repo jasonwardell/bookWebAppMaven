@@ -16,4 +16,22 @@ public interface AuthorDaoStrategy {
     public DBStrategy getDb();
     
     public void setDb(DBStrategy db);
+    
+    public void initDao(String driver, String url, String user, String pwd);
+
+    public String getDriver();
+
+    public void setDriver(String driver);
+
+    public String getUrl();
+
+    public void setUrl(String url);
+
+    public String getUser();
+
+    public void setUser(String user);
+
+    public String getPwd();
+
+    public void setPwd(String pwd);
 }
