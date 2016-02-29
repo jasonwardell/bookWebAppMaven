@@ -11,7 +11,11 @@ public interface AuthorDaoStrategy {
 
     List<Author> getAuthorList() throws ClassNotFoundException, SQLException;
     
+    public boolean editAuthor(Integer authorId, String authorName) throws ClassNotFoundException, SQLException;
+    
     public int deleteAuthorById(Object id) throws ClassNotFoundException, SQLException;
+    
+    public Author getAuthorById(Integer authorId) throws ClassNotFoundException, SQLException;
     
     public DBStrategy getDb();
     

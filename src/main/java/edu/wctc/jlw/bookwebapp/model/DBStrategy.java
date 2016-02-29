@@ -27,5 +27,8 @@ public interface DBStrategy {
     public boolean insertNewRecord(String tableName, List<String> columnNames, 
             List<Object> columnValues) throws SQLException;
     
+    public Map<String, Object> findById(String tableName, String primaryKeyFieldName,
+            Object primaryKeyValue) throws SQLException;
+    
 //    public void deleteRecordById(String deleteId, String tableName) throws SQLException;
 }

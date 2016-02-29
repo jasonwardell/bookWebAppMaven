@@ -1,5 +1,7 @@
 package edu.wctc.jlw.bookwebapp.controller;
 
+import static com.sun.corba.se.spi.presentation.rmi.StubAdapter.request;
+import edu.wctc.jlw.bookwebapp.model.Author;
 import edu.wctc.jlw.bookwebapp.model.AuthorService;
 import java.io.IOException;
 import java.util.List;
@@ -10,6 +12,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import edu.wctc.jlw.bookwebapp.model.MockAuthorDao;
+import java.sql.SQLException;
+import java.util.Arrays;
 import javax.inject.Inject;
 
 /**
@@ -19,11 +23,24 @@ import javax.inject.Inject;
 @WebServlet(name = "AuthorController", urlPatterns = {"/AuthorController"})
 public class AuthorController extends HttpServlet {
 
+    private static final String AUTH_LIST = "authorList";
+    private static final String ERR = "errorMsg";
+    private static final String AUTHOR_JSP = "/authorInfo.jsp";
+    private static final String AUTH_LIST_ACTION = "authorList";
+    private static final String ADD_EDIT_JSP = "/addEdit.jsp";
+    private static final String ADD_EDIT_DELETE_ACTION = "addEditDelete";
+    private static final String ACTION = "action";
+    private static final String ADD = "add";
+    private static final String EDIT = "edit";
+    private static final String DELETE = "delete";
+    private static final String SAVE = "save";
+
     private String driverClass;
     private String url;
     private String username;
     private String password;
 
+    String page = AUTHOR_JSP;
     @Inject
     private AuthorService authorService;
 
@@ -41,20 +58,75 @@ public class AuthorController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
 
         configDbConnection();
-        
-        try {
-            List responseMsg = authorService.getAuthorList();
+        String action = request.getParameter(ACTION);
 
-            request.setAttribute("authorList", responseMsg);
+        try {
+            String subAction = request.getParameter("submit");
+
+            if (action.equals(AUTH_LIST_ACTION)) {
+                List responseMsg = authorService.getAuthorList();
+                request.setAttribute(AUTH_LIST, responseMsg);
+                RequestDispatcher view
+                        = request.getRequestDispatcher(AUTHOR_JSP);
+                view.forward(request, response);
+
+            } else if (action.equals(ADD_EDIT_DELETE_ACTION)) {
+                if (subAction.equals(ADD)) {
+
+                    RequestDispatcher view
+                            = request.getRequestDispatcher(ADD_EDIT_JSP);
+                    view.forward(request, response);
+
+                } else if (subAction.equals(EDIT)) {
+                    RequestDispatcher view
+                            = request.getRequestDispatcher(ADD_EDIT_JSP);
+                    view.forward(request, response);
+
+                    String[] authorIds = request.getParameterValues("authorId");
+                    String[] authorNames = request.getParameterValues("authorName");
+                    String authorName = Arrays.toString(authorNames);
+                    for (String authorId : authorIds) {
+                        authorService.saveOrUpdateAuthor(authorId, authorName);
+                    }
+//
+//                        String authorId = authorIds[0];
+//                            Author author = authorService.getAuthorById(authorId);
+//                            request.setAttribute("author", author);
+                    
+
+                } else if (subAction.equals(DELETE)) {
+                    String[] authorIds = request.getParameterValues("authorId");
+                    for (String id : authorIds) {
+                        authorService.deleteAuthorById(id);
+                    }
+
+                }
+
+            }
+            if (action.equals(SAVE)) {
+
+                String authorName = request.getParameter("authorName");
+                String authorId = request.getParameter("authorId");
+                authorService.saveOrUpdateAuthor(authorId, authorName);
+                List responseMsg = authorService.getAuthorList();
+                request.setAttribute(AUTH_LIST, responseMsg);
+                RequestDispatcher view
+                        = request.getRequestDispatcher(AUTHOR_JSP);
+                view.forward(request, response);
+            }
+
+            List responseMsg = authorService.getAuthorList();
+            request.setAttribute(AUTH_LIST, responseMsg);
+            RequestDispatcher view
+                    = request.getRequestDispatcher(AUTHOR_JSP);
+            view.forward(request, response);
 
         } catch (Exception e) {
-            request.setAttribute("errorMsg", e.getMessage());
+            request.setAttribute(ERR, e.getMessage());
         }
-        RequestDispatcher view
-                = request.getRequestDispatcher("/authorInfo.jsp");
-        view.forward(request, response);
+
     }
-    
+
     private void configDbConnection() {
         authorService.getDao().initDao(driverClass, url, username, password);
     }

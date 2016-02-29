@@ -2,6 +2,8 @@ package edu.wctc.jlw.bookwebapp.model;
 
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
@@ -12,12 +14,13 @@ import javax.inject.Inject;
  */
 @SessionScoped
 public class AuthorService implements Serializable {
+
     @Inject
     private AuthorDaoStrategy dao;
 
-    public AuthorService() {     
+    public AuthorService() {
     }
-    
+
     public AuthorDaoStrategy getDao() {
         return dao;
     }
@@ -25,20 +28,28 @@ public class AuthorService implements Serializable {
     public void setDao(AuthorDaoStrategy dao) {
         this.dao = dao;
     }
-    
-    public List<Author> getAuthorList() 
+
+    public List<Author> getAuthorList()
             throws ClassNotFoundException, SQLException {
-        
+
         return dao.getAuthorList();
     }
-    
+
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
         AuthorService srv = new AuthorService();
         List<Author> authors = srv.getAuthorList();
         System.out.println(authors);
     }
-    
+
     public int deleteAuthorById(Object id) throws ClassNotFoundException, SQLException {
         return dao.deleteAuthorById(id);
+    }
+
+    public Author getAuthorById(String authorId) throws ClassNotFoundException, SQLException {
+        return dao.getAuthorById(Integer.parseInt(authorId));
+    }
+
+    public void saveOrUpdateAuthor(String authorId, String authorName) throws ClassNotFoundException, SQLException {
+        dao.editAuthor(Integer.parseInt(authorId), authorName);
     }
 }

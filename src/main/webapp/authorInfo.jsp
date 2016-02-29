@@ -23,34 +23,45 @@
             </h1> 
         </header>
         <ul>
-            <li> <a href="index.html">Home</a></li>
-            <li><a href="AuthorController?action=AuthorController">View all Authors</a></li>
-            <li><a href="AuthorController?action=AuthorController">View all Books</a></li>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="AuthorController?action=authorList">View all Authors</a></li>
+            <li><a href="AuthorController?action=authorList">View all Books</a></li>
         </ul>
         <p>
-        <table id="authors" BORDER="3" CELLSPACING="1" CELLPADDING="1" >
-            <tr>
-                <th>Author ID</th>
-                <th>Author Name</th>
-                <th>Date Added</th>
-            </tr>
-            <c:forEach var="author" items="${authorList}">
+        <form method="POST" action="AuthorController?action=addEditDelete">
+            <table id="authors" BORDER="3" CELLSPACING="1" CELLPADDING="1" >
                 <tr>
-                    <td>
-                        <input type="checkbox" name="option" value="${author.authorId}">
-                        <%--<c:out value="${author.authorId}" />--%>
-                    </td>
-                    <td>
-                        <c:out value="${author.authorName}" />
-                    </td>
-                    <td>
-                        <fmt:formatDate value="${author.dateAdded}" pattern="MMM/dd/yy"/>
-
-                    </td>
+                    <th><input id="add" class="center" type="submit" name="submit" value="add" style="background-color:green; width:100%" /></th>
+                    <th><input id="edit" class="center" type="submit" name="submit" value="edit" style="background-color:yellow; width:100%" /></th>
+                    <th><input id="delete" class="center" type="submit" name="submit" value="delete" style="background-color:red; width:100%" /></th>
                 </tr>
-            </c:forEach>
-        </table>
+                <tr>
+                    <th class="center">Author ID</th>
+                    <th class="center">Author Name</th>
+                    <th class="center">Date Added</th>
+                </tr>
+                <c:forEach var="author" items="${authorList}">
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="authorId" value="${author.authorId}">
+                            <%--<c:out value="${author.authorId}" />--%>
+                        </td>
+                        <td>
+                            <c:out value="${author.authorName}" />
+                        </td>
+                        <td>
+                            <fmt:formatDate value="${author.dateAdded}" pattern="MMM/dd/yy"/>
 
+                        </td>
+                    </tr>
+                </c:forEach>
+                <tr>
+                    <th><input id="add" class="center" type="submit" name="submit" value="add" style="background-color:green; width:100%" /></th>
+                    <th><input id="edit" class="center" type="submit" name="submit" value="edit" style="background-color:yellow; width:100%" /></th>
+                    <th><input id="delete" class="center" type="submit" name="submit" value="delete" style="background-color:red; width:100%" /></th>
+                </tr>
+            </table>
+        </form>
     </p>
 </body>
 <footer>

@@ -106,6 +106,31 @@ public class MySqlDBStrategy implements DBStrategy, Serializable {
         final String finalSQL = sql.toString();
         return conn_loc.prepareStatement(finalSQL);
     }
+    
+    @Override
+    public Map<String, Object> findById(String tableName, String primaryKeyFieldName,
+            Object primaryKeyValue) throws SQLException {
+
+        String sql = "SELECT * FROM " + tableName + " WHERE " + primaryKeyFieldName + " = ?";
+        PreparedStatement stmt = null;
+        final Map<String, Object> record = new HashMap();
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setObject(1, primaryKeyValue);
+            ResultSet rs = stmt.executeQuery();
+            final ResultSetMetaData metaData = rs.getMetaData();
+            final int fields = metaData.getColumnCount();
+
+            if (rs.next()) {
+                for (int i = 1; i <= fields; i++) {
+                    record.put(metaData.getColumnName(i), rs.getObject(i));
+                }
+            }
+                stmt.close();
+                conn.close();
+
+        return record;
+    }
 
     @Override
     public int updateRecordById(String tableName, List<String> colNames,
