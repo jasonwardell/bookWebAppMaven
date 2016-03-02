@@ -28,7 +28,7 @@ public class MySqlDBStrategy implements DBStrategy, Serializable {
 
     public MySqlDBStrategy() {
     }
-    
+
     @Override
     public void openConnection(String driverClass, String url,
             String userName, String password) throws ClassNotFoundException, SQLException {
@@ -81,6 +81,15 @@ public class MySqlDBStrategy implements DBStrategy, Serializable {
         return records;
     }
 
+    @Override
+    public int insertRecord(String tableName, String authorName) throws SQLException {
+
+        String sql = "insert into " + tableName + " (author_name) Values('" + authorName + "')";
+        Statement stmt = conn.createStatement();
+
+        return stmt.executeUpdate(sql);
+    }
+
     /*
 	 * Builds a java.sql.PreparedStatement for an sql update using only one where clause test
 	 * @param conn - a JDBC <code>Connection</code> object
@@ -106,7 +115,7 @@ public class MySqlDBStrategy implements DBStrategy, Serializable {
         final String finalSQL = sql.toString();
         return conn_loc.prepareStatement(finalSQL);
     }
-    
+
     @Override
     public Map<String, Object> findById(String tableName, String primaryKeyFieldName,
             Object primaryKeyValue) throws SQLException {
@@ -115,19 +124,19 @@ public class MySqlDBStrategy implements DBStrategy, Serializable {
         PreparedStatement stmt = null;
         final Map<String, Object> record = new HashMap();
 
-            stmt = conn.prepareStatement(sql);
-            stmt.setObject(1, primaryKeyValue);
-            ResultSet rs = stmt.executeQuery();
-            final ResultSetMetaData metaData = rs.getMetaData();
-            final int fields = metaData.getColumnCount();
+        stmt = conn.prepareStatement(sql);
+        stmt.setObject(1, primaryKeyValue);
+        ResultSet rs = stmt.executeQuery();
+        final ResultSetMetaData metaData = rs.getMetaData();
+        final int fields = metaData.getColumnCount();
 
-            if (rs.next()) {
-                for (int i = 1; i <= fields; i++) {
-                    record.put(metaData.getColumnName(i), rs.getObject(i));
-                }
+        if (rs.next()) {
+            for (int i = 1; i <= fields; i++) {
+                record.put(metaData.getColumnName(i), rs.getObject(i));
             }
-                stmt.close();
-                conn.close();
+        }
+        stmt.close();
+        conn.close();
 
         return record;
     }

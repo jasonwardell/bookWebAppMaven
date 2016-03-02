@@ -87,7 +87,24 @@ public class AuthorDao implements AuthorDaoStrategy, Serializable {
     }
 
     @Override
-    public Author getAuthorById(Integer authorId) throws ClassNotFoundException, SQLException  {
+    public boolean addAuthor(Integer id,String name) throws SQLException {
+        boolean result = false;
+        try {
+            db.openConnection(driver, url, user, pwd);
+            result = db.insertNewRecord("author", Arrays.asList("author_name","date_added"), 
+                                      Arrays.asList(name,new Date()));
+            return result;
+        } catch (SQLException sqlE) {
+            throw sqlE;
+        } catch (Exception e) {
+            throw new SQLException(e.getMessage());
+        } finally {
+            db.closeConnection();
+        }
+    }
+
+    @Override
+    public Author getAuthorById(Integer authorId) throws ClassNotFoundException, SQLException {
         db.openConnection(driver, url, user, pwd);
 
         Map<String, Object> rawRec = db.findById("author", "author_id", authorId);

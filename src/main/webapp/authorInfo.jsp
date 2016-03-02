@@ -50,7 +50,8 @@
                             <c:out value="${author.authorName}" />
                         </td>
                         <td>
-                            <fmt:formatDate value="${author.dateAdded}" pattern="MMM/dd/yy"/>
+                           <%-- <fmt:formatDate value="${author.dateAdded}" pattern="MMM/dd/yy"/> --%>
+                            <fmt:formatDate pattern="M/d/yyyy" value="${author.dateAdded}"></fmt:formatDate>
 
                         </td>
                     </tr>

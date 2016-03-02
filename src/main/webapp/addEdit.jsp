@@ -16,9 +16,9 @@
         <title>Author List</title>
     </head>
     <body>
-            <header>
-        <h1 class="center" >Author List</h1>
-            </header>
+        <header>
+            <h1 class="center" >Author List</h1>
+        </header>
         <div class="center" align="center">
             <form method="POST" action="AuthorController" class="center" >
                 <table class="center" width="500" border="1" cellspacing="0" cellpadding="4">
@@ -27,14 +27,14 @@
                         <c:when test="${not empty author}">
                             <tr class="center">
                                 <td>ID</td>
-                                <td><input type="text" value="${author.authorId}" name="authorId" readonly/></td>
+                                <td><input type="text" value="${author.authorId}" id="authorId" name="authorId" readonly/></td>
                             </tr>         
                         </c:when>
                     </c:choose>
 
                     <tr class="center">
                         <td style="background-color: lightblue">Name</td>
-                        <td><input type="text" value="${author.authorName}" name="authorName" /></td>
+                        <td><input type="text" value="${author.authorName}" id="authorName" name="authorName" /></td>
                     </tr>
 
                     <c:choose>
@@ -46,10 +46,11 @@
                         </c:when>
                     </c:choose>
 
-                    <tr class="center">
-                    <input type="submit" value="Cancel" name="action" />&nbsp;
-                    <input type="submit" value="Save" name="action" />
-                    </tr>
+                        <tr class="center">
+                        <input type="submit" value="Cancel" name="action" />&nbsp;
+                        <input type="submit" value="Save" name="action" />
+                        </tr>
+
                 </table>
             </form>
         </div>

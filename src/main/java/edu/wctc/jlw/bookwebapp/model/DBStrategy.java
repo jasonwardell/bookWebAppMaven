@@ -30,5 +30,7 @@ public interface DBStrategy {
     public Map<String, Object> findById(String tableName, String primaryKeyFieldName,
             Object primaryKeyValue) throws SQLException;
     
+    public int insertRecord(String tableName, String authorName) throws SQLException;
+    
 //    public void deleteRecordById(String deleteId, String tableName) throws SQLException;
 }

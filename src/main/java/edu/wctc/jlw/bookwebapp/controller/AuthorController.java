@@ -1,6 +1,5 @@
 package edu.wctc.jlw.bookwebapp.controller;
 
-import static com.sun.corba.se.spi.presentation.rmi.StubAdapter.request;
 import edu.wctc.jlw.bookwebapp.model.Author;
 import edu.wctc.jlw.bookwebapp.model.AuthorService;
 import java.io.IOException;
@@ -33,14 +32,14 @@ public class AuthorController extends HttpServlet {
     private static final String ADD = "add";
     private static final String EDIT = "edit";
     private static final String DELETE = "delete";
-    private static final String SAVE = "save";
+    private static final String SAVE = "Save";
 
     private String driverClass;
     private String url;
     private String username;
     private String password;
+    private int count;
 
-    String page = AUTHOR_JSP;
     @Inject
     private AuthorService authorService;
 
@@ -72,47 +71,47 @@ public class AuthorController extends HttpServlet {
 
             } else if (action.equals(ADD_EDIT_DELETE_ACTION)) {
                 if (subAction.equals(ADD)) {
-
+               count = 1;
                     RequestDispatcher view
                             = request.getRequestDispatcher(ADD_EDIT_JSP);
                     view.forward(request, response);
 
                 } else if (subAction.equals(EDIT)) {
+                    String[] authorIds = request.getParameterValues("authorId");
+                    String authorId = authorIds[0];
+                    Author author = authorService.getAuthorById(authorId);
+                    request.setAttribute("author", author);
+
                     RequestDispatcher view
                             = request.getRequestDispatcher(ADD_EDIT_JSP);
                     view.forward(request, response);
-
-                    String[] authorIds = request.getParameterValues("authorId");
-                    String[] authorNames = request.getParameterValues("authorName");
-                    String authorName = Arrays.toString(authorNames);
-                    for (String authorId : authorIds) {
-                        authorService.saveOrUpdateAuthor(authorId, authorName);
-                    }
-//
-//                        String authorId = authorIds[0];
-//                            Author author = authorService.getAuthorById(authorId);
-//                            request.setAttribute("author", author);
-                    
 
                 } else if (subAction.equals(DELETE)) {
                     String[] authorIds = request.getParameterValues("authorId");
                     for (String id : authorIds) {
                         authorService.deleteAuthorById(id);
                     }
+                    List responseMsg = authorService.getAuthorList();
+                    request.setAttribute(AUTH_LIST, responseMsg);
+                    RequestDispatcher view
+                            = request.getRequestDispatcher(AUTHOR_JSP);
+                    view.forward(request, response);
 
                 }
 
             }
-            if (action.equals(SAVE)) {
 
+            if (action.equals(SAVE)) {
+                if (count == 1) {
+                    String authName = request.getParameter("authorName");
+                    authorService.addAuthor(authName);
+                    count = 0;
+                } else {
+                
                 String authorName = request.getParameter("authorName");
                 String authorId = request.getParameter("authorId");
                 authorService.saveOrUpdateAuthor(authorId, authorName);
-                List responseMsg = authorService.getAuthorList();
-                request.setAttribute(AUTH_LIST, responseMsg);
-                RequestDispatcher view
-                        = request.getRequestDispatcher(AUTHOR_JSP);
-                view.forward(request, response);
+                }
             }
 
             List responseMsg = authorService.getAuthorList();
