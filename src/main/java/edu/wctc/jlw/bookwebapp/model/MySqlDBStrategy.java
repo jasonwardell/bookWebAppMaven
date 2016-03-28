@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.enterprise.context.Dependent;
+import javax.sql.DataSource;
 
 /**
  *
@@ -27,6 +28,22 @@ public class MySqlDBStrategy implements DBStrategy, Serializable {
     private Connection conn;
 
     public MySqlDBStrategy() {
+    }
+    
+    /**
+     * Open a connection using a connection pool configured on server.
+     *
+     * @param ds - a reference to a connection pool via a JNDI name, producing
+     * this object. Typically done in a servlet using InitalContext object.
+     * @throws DataAccessException - if ds cannot be established
+     */
+    @Override
+    public final void openConnection(DataSource ds) throws SQLException {
+        try {
+            conn = ds.getConnection();
+        } catch (SQLException ex) {
+            throw new SQLException(ex.getMessage(),ex.getCause());
+        }
     }
 
     @Override
@@ -263,18 +280,18 @@ public class MySqlDBStrategy implements DBStrategy, Serializable {
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
 
         DBStrategy db = new MySqlDBStrategy();
-        db.openConnection("com.mysql.jdbc.Driver",
-                "jdbc:mysql://localhost:3306/book", "root", "admin");
+//        db.openConnection("com.mysql.jdbc.Driver",
+//                "jdbc:mysql://localhost:3306/book", "root", "admin");
 
 //        db.deleteRecordById("author", "author_id", 2);
-        List<String> colNames = Arrays.asList("author_name", "date_added");
-        List<Object> colValues = Arrays.asList("Mike Jones", "1998-01-10");
-        int result = db.updateRecordById("author", colNames, colValues, "author_id", 3);
+//        List<String> colNames = Arrays.asList("author_name", "date_added");
+//        List<Object> colValues = Arrays.asList("Mike Jones", "1998-01-10");
+//        int result = db.updateRecordById("author", colNames, colValues, "author_id", 3);
 //        db.insertNewRecord("author", colNames, colValues);
 
         db.openConnection("com.mysql.jdbc.Driver",
-                "jdbc:mysql://localhost:3306/book", "root", "admin");
-        List<Map<String, Object>> rawData = db.findAllRecords("author", 0);
+                "jdbc:mysql://localhost:3306/collectibles", "root", "admin");
+        List<Map<String, Object>> rawData = db.findAllRecords("collectible", 0);
 
         db.closeConnection();
 

@@ -9,6 +9,7 @@ import static javafx.css.StyleOrigin.USER;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Alternative;
 import static javax.servlet.SessionTrackingMode.URL;
+import javax.sql.DataSource;
 
 /**
  *
@@ -122,6 +123,11 @@ public class MockAuthorDao implements AuthorDaoStrategy, Serializable {
 
     @Override
     public boolean addAuthor(Integer id, String name) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void initDao(DataSource ds) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

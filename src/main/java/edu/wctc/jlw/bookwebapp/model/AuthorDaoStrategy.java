@@ -2,6 +2,7 @@ package edu.wctc.jlw.bookwebapp.model;
 
 import java.sql.SQLException;
 import java.util.List;
+import javax.sql.DataSource;
 
 /**
  *
@@ -22,6 +23,8 @@ public interface AuthorDaoStrategy {
     public DBStrategy getDb();
     
     public void setDb(DBStrategy db);
+    
+    public abstract void initDao(DataSource ds) throws SQLException;
     
     public void initDao(String driver, String url, String user, String pwd);
 
