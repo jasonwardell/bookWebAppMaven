@@ -1,7 +1,7 @@
 package edu.wctc.jlw.bookwebapp.controller;
 
+import edu.wctc.jlw.bookwebapp.ejb.AuthorFacade;
 import edu.wctc.jlw.bookwebapp.model.Author;
-import edu.wctc.jlw.bookwebapp.model.AuthorService;
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
@@ -10,12 +10,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.sql.SQLException;
 import javax.inject.Inject;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
+
 
 /**
  *
@@ -36,15 +32,10 @@ public class AuthorController extends HttpServlet {
     private static final String DELETE = "delete";
     private static final String SAVE = "Save";
 
-    private String driverClass;
-    private String url;
-    private String username;
-    private String password;
     private int count;
-    private String dbJndiName;
 
     @Inject
-    private AuthorService authorService;
+    private AuthorFacade authorService;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -63,11 +54,10 @@ public class AuthorController extends HttpServlet {
         String destination = AUTH_LIST;
 
         try {
-            configDbConnection();
             String subAction = request.getParameter("submit");
 
             if (action.equals(AUTH_LIST_ACTION)) {
-                this.refreshList(request, authorService);
+                this.refreshList(request);
 
                 RequestDispatcher view
                         = request.getRequestDispatcher(AUTHOR_JSP);
@@ -83,7 +73,7 @@ public class AuthorController extends HttpServlet {
                 } else if (subAction.equals(EDIT)) {
                     String[] authorIds = request.getParameterValues("authorId");
                     String authorId = authorIds[0];
-                    Author author = authorService.getAuthorById(authorId);
+                    Author author = authorService.find(new Integer(authorId));
                     request.setAttribute("author", author);
 
                     RequestDispatcher view
@@ -93,9 +83,9 @@ public class AuthorController extends HttpServlet {
                 } else if (subAction.equals(DELETE)) {
                     String[] authorIds = request.getParameterValues("authorId");
                     for (String id : authorIds) {
-                        authorService.deleteAuthorById(id);
+                        authorService.deleteById(id);
                     }
-                    this.refreshList(request, authorService);
+                    this.refreshList(request);
 
                     RequestDispatcher view
                             = request.getRequestDispatcher(AUTHOR_JSP);
@@ -108,17 +98,17 @@ public class AuthorController extends HttpServlet {
             if (action.equals(SAVE)) {
                 if (count == 1) {
                     String authName = request.getParameter("authorName");
-                    authorService.addAuthor(authName);
+                    String authId = request.getParameter("authorId");
+                    authorService.saveOrUpdate(authId, authName);
                     count = 0;
                 } else {
-
                     String authorName = request.getParameter("authorName");
                     String authorId = request.getParameter("authorId");
-                    authorService.saveOrUpdateAuthor(authorId, authorName);
+                    authorService.saveOrUpdate(authorId, authorName);
                 }
             }
 
-            this.refreshList(request, authorService);
+            this.refreshList(request);
             RequestDispatcher view
                     = request.getRequestDispatcher(AUTHOR_JSP);
             view.forward(request, response);
@@ -133,24 +123,11 @@ public class AuthorController extends HttpServlet {
 
     }
 
-    private void refreshList(HttpServletRequest request, AuthorService authorService) throws Exception {
-        List<Author> authors = authorService.getAuthorList();
+    private void refreshList(HttpServletRequest request) throws Exception {
+        List<Author> authors = authorService.findAll();
         request.setAttribute(AUTH_LIST, authors);
     }
 
-    private void configDbConnection() throws SQLException, NamingException {
-           if(dbJndiName == null) {
-            authorService.getDao().initDao(driverClass, url, username, password);   
-        } else {
-            /*
-             Lookup the JNDI name of the Glassfish connection pool
-             and then use it to create a DataSource object.
-             */
-            Context ctx = new InitialContext();
-            DataSource ds = (DataSource) ctx.lookup(dbJndiName);
-            authorService.getDao().initDao(ds);
-        }
-    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -191,12 +168,4 @@ public class AuthorController extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    @Override
-    public void init() throws ServletException {
-//        driverClass = getServletContext().getInitParameter("db.driver.class");
-//        url = getServletContext().getInitParameter("db.url");
-//        username = getServletContext().getInitParameter("db.username");
-//        password = getServletContext().getInitParameter("db.password");
-        dbJndiName = getServletContext().getInitParameter("db.jndi.name");
-    }
 }
