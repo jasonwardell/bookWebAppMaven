@@ -45,6 +45,7 @@ public class AuthorFacade extends AbstractFacade<Author> {
             // modify record
             author.setAuthorId(new Integer(id));
             author.setAuthorName(name);
+            author.setDateAdded(new Date());
         }
         this.getEntityManager().merge(author);
     }

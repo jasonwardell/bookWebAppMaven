@@ -3,7 +3,11 @@ package edu.wctc.jlw.bookwebapp.controller;
 import edu.wctc.jlw.bookwebapp.ejb.AuthorFacade;
 import edu.wctc.jlw.bookwebapp.model.Author;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -103,7 +107,7 @@ public class AuthorController extends HttpServlet {
                     count = 0;
                 } else {
                     String authorName = request.getParameter("authorName");
-                    String authorId = request.getParameter("authorId");
+                    String authorId = request.getParameter("authorId"); 
                     authorService.saveOrUpdate(authorId, authorName);
                 }
             }
