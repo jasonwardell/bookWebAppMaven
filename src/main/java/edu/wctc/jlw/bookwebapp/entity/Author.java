@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.wctc.jlw.bookwebapp.model;
+package edu.wctc.jlw.bookwebapp.entity;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -122,5 +122,4 @@ public class Author implements Serializable {
     public void setBookCollection(Collection<Book> bookCollection) {
         this.bookCollection = bookCollection;
     }
-    
 }
