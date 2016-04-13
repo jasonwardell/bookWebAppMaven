@@ -25,7 +25,7 @@
         <ul>
             <li><a href="index.html">Home</a></li>
             <li><a href="AuthorController?action=authorList">View all Authors</a></li>
-            <li><a href="AuthorController?action=authorList">View all Books</a></li>
+           <li><a href="BookController?action=list">View All Books</a></li>
         </ul>
         <p>
         <form method="POST" action="AuthorController?action=addEditDelete">
