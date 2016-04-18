@@ -8,6 +8,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -21,6 +22,10 @@
             <h1 id="title">
                 Book Authors
             </h1> 
+            <sec:authorize access="hasAnyRole('ROLE_MGR','ROLE_USER')">
+            Logged in as: <sec:authentication property="principal.username"></sec:authentication> ::
+            <a href='<%= this.getServletContext().getContextPath() + "/j_spring_security_logout"%>'>Log Me Out</a>
+        </sec:authorize> 
         </header>
         <ul>
             <li><a href="index.html">Home</a></li>
@@ -31,9 +36,11 @@
         <form method="POST" action="AuthorController?action=addEditDelete">
             <table id="authors" BORDER="3" CELLSPACING="1" CELLPADDING="1" >
                 <tr>
+                <sec:authorize access="hasAnyRole('ROLE_MGR')">
                     <th><input id="add" class="center" type="submit" name="submit" value="add" style="background-color:green; width:100%" /></th>
                     <th><input id="edit" class="center" type="submit" name="submit" value="edit" style="background-color:yellow; width:100%" /></th>
                     <th><input id="delete" class="center" type="submit" name="submit" value="delete" style="background-color:red; width:100%" /></th>
+               </sec:authorize>
                 </tr>
                 <tr>
                     <th class="center">Author ID</th>
@@ -57,10 +64,12 @@
                     </tr>
                 </c:forEach>
                 <tr>
+                    <sec:authorize access="hasAnyRole('ROLE_MGR')">
                     <th><input id="add" class="center" type="submit" name="submit" value="add" style="background-color:green; width:100%" /></th>
                     <th><input id="edit" class="center" type="submit" name="submit" value="edit" style="background-color:yellow; width:100%" /></th>
                     <th><input id="delete" class="center" type="submit" name="submit" value="delete" style="background-color:red; width:100%" /></th>
-                </tr>
+              </sec:authorize>
+                    </tr>
             </table>
         </form>
     </p>

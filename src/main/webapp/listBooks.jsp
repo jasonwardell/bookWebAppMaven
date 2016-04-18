@@ -19,10 +19,15 @@
     </head>
     <body>
         <h1>Book List</h1>
-
+        <sec:authorize access="hasAnyRole('ROLE_MGR','ROLE_USER')">
+            Logged in as: <sec:authentication property="principal.username"></sec:authentication> ::
+            <a href='<%= this.getServletContext().getContextPath() + "/j_spring_security_logout"%>'>Log Me Out</a>
+        </sec:authorize>
         <form method="POST" action="BookController?action=addEditDelete">
+            <sec:authorize access="hasAnyRole('ROLE_MGR')">
             <input type="submit" value="Add/Edit" name="submit" />&nbsp;
             <input type="submit" value="Delete" name="submit" />
+            </sec:authorize>
             <br><br>
             <table style="width: 75%;" border="1" cellspacing="0" cellpadding="4">
                 <tr style="background-color: black;color:white;">
@@ -57,8 +62,10 @@
                 </c:forEach>
             </table>
             <br>
+            <sec:authorize access="hasAnyRole('ROLE_MGR')">
             <input type="submit" value="Add/Edit" name="submit" />&nbsp;
             <input type="submit" value="Delete" name="submit" />
+       </sec:authorize>
         </form>
         <p>Click here to go back to Home Page <a href="index.html">Home</a></p>
 
